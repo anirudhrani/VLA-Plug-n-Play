@@ -1,0 +1,52 @@
+# DROID-style scene (sim/droid_scene1.usd), mirroring arhanjain/sim-evals scene 1: sim-evals' Franka + Robotiq 2F-85,
+# oak table, photo-studio HDR, Rubik's cube + YCB bowl, their cameras, sphere light and physics (120 Hz).
+# The panel uses this config whenever sim/droid_scene1.usd is the open stage.
+usd: sim/droid_scene1.usd
+instruction_hint: put the cube in the bowl      # sim-evals' instruction for scene 1
+
+robot:
+  articulation: /World/robot
+  arm_joints: [panda_joint1, panda_joint2, panda_joint3, panda_joint4, panda_joint5, panda_joint6, panda_joint7]
+  gripper_joint: finger_joint
+  gripper_open_deg: 0.0
+  gripper_closed_deg: 45.0   # sim-evals: close command pi/4, gripper observation = q / (pi/4)
+  # sim-evals NVIDIA_DROID actuators (SI, per rad); also authored in the USD, re-applied at episode start
+  drive_overrides:
+    disable_gravity: true
+    arm_stiffness: 400.0
+    arm_damping: 80.0
+
+cameras:
+  exo:
+    prim: /World/external_cam          # sim-evals "external_cam": the exterior view the policy gets
+    resolution: [1280, 720]            # sim-evals renders 1280x720; the model sees 224x224 (padded)
+    topic: /vla/exo/image_raw
+    frame_id: exo_camera
+  wrist:
+    prim: /World/robot/Gripper/Robotiq_2F_85/base_link/wrist_cam
+    resolution: [1280, 720]
+    topic: /vla/wrist/image_raw
+    frame_id: wrist_camera
+
+topics:
+  joint_states: /joint_states
+  gripper: /vla/gripper
+  request: /vla/request
+  instruction: /vla/instruction
+  action_chunk: /vla/action_chunk
+  bridge_status: /vla/bridge_status
+  instruction_ack: /vla/instruction_ack
+
+episode:
+  timeout_s: 30.0          # sim-evals: episode_length_s = 30
+  chunk_timeout_s: 10.0
+
+task:
+  name: cube in bowl
+  object: /World/scene/rubiks_cube
+  container: /World/scene/_24_bowl
+  radius_frac: 0.8
+  hold_s: 0.3
+
+capture:
+  rt_subframes: 8

@@ -1,0 +1,13 @@
+[package]
+version = "0.1.0"
+title = "VLA Sim"
+description = "Load a Vision-Language-Action model and drive the robot from natural-language instructions."
+category = "Robotics"
+keywords = ["vla", "openpi", "pi0.5", "ros2"]
+
+[dependencies]
+"omni.ui" = {}
+"omni.kit.uiapp" = {}
+
+[[python.module]]
+name = "vla_sim"

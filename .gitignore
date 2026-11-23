@@ -1,0 +1,23 @@
+# local / machine-specific
+.vscode
+.env
+plan.md
+README.md
+
+# third-party code and downloaded assets (fetched separately)
+third_party/
+sim/assets/
+
+# only the DROID example scene is published
+sim/franka_workspace.usd
+sim/ur5e_workspace.usd
+configs/scene_franka_droid.yaml
+
+# outputs and build products
+outputs/
+ros2_ws/.venv/
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+__pycache__/
+*.pyc

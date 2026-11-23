@@ -1,0 +1,43 @@
+# Model catalog: drives the panel's model list (one Load button per model) and the process manager.
+# All three are openpi DROID policies: same inputs (exterior + wrist 224x224, 7 joint positions, gripper, prompt)
+# and 8-dim actions; they differ in what the 7 arm values mean (action_type, converted in Isaac by executor.py).
+# Each model has its own port so a server left running for one model is never mistaken for another.
+models:
+  pi05_droid_jointpos_polaris:
+    description: "π0.5 · absolute joint positions (PolaRiS, used by sim-evals)"
+    server: openpi                    # scripts/serve_openpi.sh <openpi_config> <port> <checkpoint>
+    openpi_config: pi05_droid_jointpos_polaris
+    checkpoint: gs://openpi-assets/checkpoints/polaris/pi05_droid_jointpos_polaris
+    port: 8002
+    adapter: openpi_droid             # vla_bridge/adapters/openpi_droid.py
+    action_type: droid_joint_position # executor: arm target = action (rad, clipped to limits), gripper binarized
+    image_size: [224, 224]
+    action_horizon: 15                # Pi0Config(action_horizon=15, pi05=True)
+    open_loop_horizon: 8
+    control_hz: 15
+
+  pi05_droid:
+    description: "π0.5 · joint velocities"
+    server: openpi
+    openpi_config: pi05_droid
+    checkpoint: gs://openpi-assets/checkpoints/pi05_droid
+    port: 8000
+    adapter: openpi_droid
+    action_type: droid_joint_velocity # executor: q + 0.2*clip(v), gripper binarized at 0.5
+    image_size: [224, 224]
+    action_horizon: 15                # Pi0Config(action_horizon=15)
+    open_loop_horizon: 8
+    control_hz: 15
+
+  pi0_fast_droid:
+    description: "π0-FAST · joint velocities (autoregressive tokens)"
+    server: openpi
+    openpi_config: pi0_fast_droid
+    checkpoint: gs://openpi-assets/checkpoints/pi0_fast_droid
+    port: 8001
+    adapter: openpi_droid
+    action_type: droid_joint_velocity
+    image_size: [224, 224]
+    action_horizon: 10                # Pi0FASTConfig(action_dim=8, action_horizon=10)
+    open_loop_horizon: 8
+    control_hz: 15
